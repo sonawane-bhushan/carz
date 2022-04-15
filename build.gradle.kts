@@ -29,6 +29,7 @@ dependencies {
 	testImplementation("io.projectreactor:reactor-test")
 	testImplementation("org.testcontainers:junit-jupiter")
 	testImplementation("org.testcontainers:mongodb")
+	testImplementation("io.mockk:mockk:1.9.3")
 }
 
 dependencyManagement {
