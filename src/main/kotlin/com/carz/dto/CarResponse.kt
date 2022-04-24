@@ -12,17 +12,19 @@ class CarResponse(
     var ncapRating: Float,
     var description: String,
     var rating: Float
-){
-    companion object fun fromEntity(car: Car): CarResponse{
-        return CarResponse(
-            id = car.id!!,
-            name = car.name,
-            brand = car.brand,
-            images = car.images,
-            fuelType = car.fuelType,
-            ncapRating = car.ncapRating,
-            description = car.description,
-            rating = car.rating
-        )
+) {
+    companion object {
+        fun fromEntity(car: Car): CarResponse {
+            return CarResponse(
+                id = car.id!!,
+                name = car.name,
+                brand = car.brand,
+                images = car.images,
+                fuelType = car.fuelType,
+                ncapRating = car.ncapRating,
+                description = car.description,
+                rating = car.rating
+            )
+        }
     }
 }

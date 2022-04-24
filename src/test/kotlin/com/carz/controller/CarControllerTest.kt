@@ -1,8 +1,9 @@
 package com.carz.controller
 
 import com.carz.dto.CarResponse
+import com.carz.model.Car
 import com.carz.model.FuelType
-import com.carz.service.CarService
+import com.carz.service.CarServiceImpl
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.`when`
@@ -12,20 +13,21 @@ import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.expectBody
 import org.springframework.test.web.reactive.server.expectBodyList
+import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
 @WebFluxTest
 internal class CarControllerTest {
 
     @MockBean
-    private lateinit var carService: CarService
+    private lateinit var carService: CarServiceImpl
 
     @Autowired
     private lateinit var webTestClient: WebTestClient
 
     @Test
     fun `should list all the cars`() {
-        `when`(carService.getAll()).thenReturn(Mono.just(carResult))
+        `when`(carService.getAll()).thenReturn(Flux.fromIterable(carResult))
 
         webTestClient.get()
             .uri("/api/car/all")
@@ -48,7 +50,7 @@ internal class CarControllerTest {
             .returnResult()
             .responseBody
 
-        assertEqualsCars(expectedResponse, actualResponse!!)
+        assertEqualsCars(convertToCarResponse(expectedResponse), actualResponse!!)
     }
 
     @Test
@@ -64,7 +66,7 @@ internal class CarControllerTest {
     @Test
     fun `should find cars by name`(){
         val expectedResponse = carResult.find { it.name == "Nexon" }!!
-        `when`(carService.findByName("Nexon")).thenReturn(Mono.just(listOf(expectedResponse)))
+        `when`(carService.findByName("Nexon")).thenReturn(Flux.just(expectedResponse))
 
         val actualResponse = webTestClient.get()
             .uri("/api/car/name/Nexon")
@@ -74,13 +76,13 @@ internal class CarControllerTest {
             .returnResult()
             .responseBody
 
-        assertEqualsCars(expectedResponse, actualResponse!!.first())
+        assertEqualsCars(convertToCarResponse(expectedResponse), actualResponse!!.first())
     }
 
     @Test
     fun `should find cars by fuel type`(){
         val expectedResponse = carResult.find { it.fuelType == FuelType.ELECTRIC }!!
-        `when`(carService.findByFuelType(FuelType.ELECTRIC)).thenReturn(Mono.just(listOf(expectedResponse)))
+        `when`(carService.findByFuelType(FuelType.ELECTRIC)).thenReturn(Flux.just(expectedResponse))
 
         val actualResponse = webTestClient.get()
             .uri("/api/car/fuel/ELECTRIC")
@@ -90,7 +92,7 @@ internal class CarControllerTest {
             .returnResult()
             .responseBody
 
-        assertEqualsCars(expectedResponse, actualResponse!!.first())
+        assertEqualsCars(convertToCarResponse(expectedResponse), actualResponse!!.first())
     }
 
     @Test
@@ -98,7 +100,7 @@ internal class CarControllerTest {
         val minValue = 3.1
         val maxValue = 4.0
         val expectedResponse = carResult.find { it.ncapRating < maxValue && it.ncapRating > minValue }!!
-        `when`(carService.findByNcapRating(minValue, maxValue)).thenReturn(Mono.just(listOf(expectedResponse)))
+        `when`(carService.findByNcapRating(minValue, maxValue)).thenReturn(Flux.just(expectedResponse))
 
         val actualResponse = webTestClient.get()
             .uri("/api/car/ncap-rating/${minValue}/${maxValue}")
@@ -108,14 +110,14 @@ internal class CarControllerTest {
             .returnResult()
             .responseBody
 
-        assertEqualsCars(expectedResponse, actualResponse!!.first())
+        assertEqualsCars(convertToCarResponse(expectedResponse), actualResponse!!.first())
     }
 
     @Test
     fun `should find cars by brand`(){
         val brand = "Tata"
         val expectedResponse = carResult.find { it.brand == brand }!!
-        `when`(carService.findByBrand(brand)).thenReturn(Mono.just(listOf(expectedResponse)))
+        `when`(carService.findByBrand(brand)).thenReturn(Flux.just(expectedResponse))
 
         val actualResponse = webTestClient.get()
             .uri("/api/car/brand/${brand}")
@@ -125,7 +127,7 @@ internal class CarControllerTest {
             .returnResult()
             .responseBody
 
-        assertEqualsCars(expectedResponse, actualResponse!!.first())
+        assertEqualsCars(convertToCarResponse(expectedResponse), actualResponse!!.first())
     }
 
     @Test
@@ -133,7 +135,7 @@ internal class CarControllerTest {
         val minValue = 4.3
         val maxValue = 4.6
         val expectedResponse = carResult.find { it.rating < maxValue && it.rating > minValue }!!
-        `when`(carService.findByRatings(minValue, maxValue)).thenReturn(Mono.just(listOf(expectedResponse)))
+        `when`(carService.findByRatings(minValue, maxValue)).thenReturn(Flux.just(expectedResponse))
 
         val actualResponse = webTestClient.get()
             .uri("/api/car/rating/${minValue}/${maxValue}")
@@ -143,11 +145,11 @@ internal class CarControllerTest {
             .returnResult()
             .responseBody
 
-        assertEqualsCars(expectedResponse, actualResponse!!.first())
+        assertEqualsCars(convertToCarResponse(expectedResponse), actualResponse!!.first())
     }
 
     private val carResult = listOf(
-        CarResponse(
+        Car(
             id = "1111",
             name = "Nexon",
             brand = "Tata",
@@ -157,7 +159,7 @@ internal class CarControllerTest {
             description = "",
             rating = 4.1f
         ),
-        CarResponse(
+        Car(
             id = "1112",
             name = "i20",
             brand = "Hyndai",
@@ -167,7 +169,7 @@ internal class CarControllerTest {
             description = "",
             rating = 4.2f
         ),
-        CarResponse(
+        Car(
             id = "1113",
             name = "XUV",
             brand = "Mahindra",
@@ -178,6 +180,8 @@ internal class CarControllerTest {
             rating = 4.5f
         )
     )
+
+    private fun convertToCarResponse(car: Car) = CarResponse.fromEntity(car)
 
     private fun assertEqualsCars(expected: CarResponse, actual: CarResponse) {
         Assertions.assertEquals(expected.id, actual.id)

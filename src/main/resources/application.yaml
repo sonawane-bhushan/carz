@@ -1,0 +1,15 @@
+spring:
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      username: admin
+      password: password
+      authentication-database: admin
+      database: test
+
+#      docker run -d --name test_mongo \
+#      -p 27017:27017 \
+#      -e MONGO_INITDB_ROOT_USERNAME=admin \
+#      -e MONGO_INITDB_ROOT_PASSWORD=password \
+#      mongo

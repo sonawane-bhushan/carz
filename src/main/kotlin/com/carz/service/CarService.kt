@@ -1,37 +1,16 @@
 package com.carz.service
 
-import com.carz.dto.CarResponse
+import com.carz.model.Car
 import com.carz.model.FuelType
-import org.springframework.stereotype.Service
+import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
-@Service
-class CarService() {
-    fun getAll(): Mono<List<CarResponse>> {
-        TODO("Not yet implemented")
-    }
-
-    fun findById(id: String): Mono<CarResponse> {
-        TODO("Not yet implemented")
-    }
-
-    fun findByName(name: String): Mono<List<CarResponse>> {
-        TODO("Not yet implemented")
-    }
-
-    fun findByFuelType(fuelType: FuelType): Mono<List<CarResponse>> {
-        TODO("Not yet implemented")
-    }
-
-    fun findByRatings(minValue: Double, maxValue: Double): Mono<List<CarResponse>> {
-        TODO("Not yet implemented")
-    }
-
-    fun findByBrand(brand: String): Mono<List<CarResponse>> {
-        TODO("Not yet implemented")
-    }
-
-    fun findByNcapRating(minValue: Double, maxValue: Double): Mono<List<CarResponse>> {
-        TODO("Not yet implemented")
-    }
+interface CarService {
+    fun getAll(): Flux<Car>
+    fun findById(id: String): Mono<Car>
+    fun findByName(name: String): Flux<Car>
+    fun findByFuelType(fuelType: FuelType): Flux<Car>
+    fun findByRatings(minValue: Double, maxValue: Double): Flux<Car>
+    fun findByBrand(brand: String): Flux<Car>
+    fun findByNcapRating(minValue: Double, maxValue: Double): Flux<Car>
 }
