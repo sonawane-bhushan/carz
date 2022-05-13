@@ -1,5 +1,6 @@
 package com.carz.service
 
+import com.carz.dto.CarRequest
 import com.carz.exception.CarNotFoundException
 import com.carz.model.Car
 import com.carz.model.FuelType
@@ -27,6 +28,20 @@ class CarServiceImpl(private val carRepository: CarRepository) : CarService {
 
     override fun findByFuelType(fuelType: FuelType): Flux<Car> {
         return carRepository.findCarByFuelType(fuelType)
+    }
+
+    override fun add(request: CarRequest): Mono<Car> {
+        return carRepository.save(
+            Car(
+                name = request.name,
+                brand = request.brand,
+                description = request.description,
+                fuelType = request.fuelType,
+                images = request.images,
+                ncapRating = request.ncapRating,
+                rating = request.rating
+            )
+        )
     }
 
     override fun findByRatings(minValue: Double, maxValue: Double): Flux<Car> {

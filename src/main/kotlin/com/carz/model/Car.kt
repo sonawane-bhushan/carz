@@ -6,7 +6,7 @@ import org.springframework.data.mongodb.core.mapping.Document
 @Document
 class Car (
     @Id
-    val id: String ?= null,
+    var id: String? = null,
     var name: String,
     var brand: String,
     var images: List<String>,

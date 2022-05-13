@@ -1,12 +1,10 @@
 package com.carz.controller
 
+import com.carz.dto.CarRequest
 import com.carz.dto.CarResponse
 import com.carz.model.FuelType
 import com.carz.service.CarServiceImpl
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
@@ -47,5 +45,10 @@ class CarController(private val carService: CarServiceImpl) {
     @GetMapping("/brand/{brand}")
     fun findByBrand(@PathVariable brand: String): Flux<CarResponse> {
         return carService.findByBrand(brand).map { CarResponse.fromEntity(it) }
+    }
+
+    @PostMapping()
+    fun addCar(@RequestBody car: CarRequest): Mono<CarResponse> {
+        return carService.add(car).map { CarResponse.fromEntity(it) }
     }
 }

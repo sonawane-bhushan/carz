@@ -1,5 +1,6 @@
 package com.carz.service
 
+import com.carz.dto.CarRequest
 import com.carz.model.Car
 import com.carz.model.FuelType
 import reactor.core.publisher.Flux
@@ -13,4 +14,5 @@ interface CarService {
     fun findByRatings(minValue: Double, maxValue: Double): Flux<Car>
     fun findByBrand(brand: String): Flux<Car>
     fun findByNcapRating(minValue: Double, maxValue: Double): Flux<Car>
+    fun add(car: CarRequest): Mono<Car>
 }
